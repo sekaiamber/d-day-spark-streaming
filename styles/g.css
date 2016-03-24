@@ -1,0 +1,76 @@
+html,
+body
+{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: rgb(215, 215, 215);
+    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(240, 240, 240)), to(rgb(190, 190, 190)));
+    background: -webkit-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background:    -moz-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background:     -ms-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background:      -o-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background:         radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    text-align: justify;
+}
+
+body
+{
+    font-family: "Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+    font-size: 18px;
+    color: #333;
+}
+
+.fairy-step,
+.fairy-element
+{
+    position: absolute;
+    opacity: 0;
+    -webkit-transition: opacity 1s;
+    -moz-transition: opacity 1s;
+    -ms-transition: opacity 1s;
+    -o-transition: opacity 1s;
+    transition: opacity 1s;
+}
+.fairy-step.current,
+.fairy-step.no-opacity
+{
+    opacity: 1 !important;
+}
+.fairy-step.show
+{
+    opacity: .3;
+}
+.fairy-element.show
+{
+    opacity: 1;
+}
+span.host
+{
+    border: rgb(59, 146, 236) solid 3px;
+    background: #D3FFD3;
+    padding: 4px;
+}
+
+pre.code-pre
+{
+    font-size: 18px;
+    text-align: left;
+    border: gray solid 1px;
+    padding: 0 20px;
+    border-radius: 10px;
+    background: #eee;
+    word-wrap: break-word;
+}
+
+pre.code-pre:after
+{
+    content: '\A';
+    white-space: pre;
+}
+
+pre.code-pre .high-light
+{
+    background: rgb(255, 211, 219);
+}
