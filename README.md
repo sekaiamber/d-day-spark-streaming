@@ -17,4 +17,4 @@
 
 Copyright 2016 Xu Xiaomeng(@sekaiamber)
 
-Released under the [WTFPL](LICENSES.md) Licenses.
+Released under the [WTFPL](LICENSE.md) License.
