@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>暴走漫画 Spark 实践 | by sekaiamber</title>
+    <meta name="author" content="sekaiamber(Xu Xiaomeng)" />
+    <link href="styles/g.css" rel="stylesheet" />
+    <link href="styles/fairy.css" rel="stylesheet" />
+    <link href="styles/google/prettify.css" rel="stylesheet" />
+    <script src="scripts/fairy.min.js"></script>
+<!-- <script src="scripts/fairy.maker.js"></script> -->
+    <script src="scripts/jquery-1.11.1.min.js"></script>
+    <script src="scripts/google/prettify.js"></script>
+</head>
+<body>
+
+    <div id="fairy">
+        <div class="fairy-step title p1" step-index="1">
+            <div class="title-text">Spark Streaming实时日志处理<br>@<br>暴走漫画</div>
+            <br><br>
+            <div>徐晓孟</div>
+            <br><br>
+            <div>2016-03-26</div>
+        </div>
+        <div class="fairy-step title p2" step-index="2">
+            <div>Spark简介</div>
+            <div>需求与思路</div>
+            <div>架构与实现</div>
+            <div>注意事项</div>
+        </div>
+
+<!-- CH1  -->
+
+        <div class="fairy-step ch1 p1" step-index="100,109" fairy-scale="2">
+            Spark
+        </div>
+        <div class="fairy-step ch1 p2" step-index="101">
+            Spark是一个高效的<br>
+            <b>分布式计算系统</b>
+        </div>
+        <div class="fairy-step ch1 p3" step-index="102">
+            性能比传统上的Hadoop MR高<br>
+            <b>100倍</b>
+        </div>
+        <div class="fairy-step ch1 p4" step-index="103">
+            并且提供更加顶层的API
+        </div>
+        <div class="fairy-step ch1 p5" step-index="104">
+            编程易于上手<br>
+            代码量更少
+        </div>
+        <div class="fairy-step ch1 p6" step-index="105">
+            what does Spark do is<br>what you want to do
+        </div>
+        <div class="fairy-step ch1 p7" step-index="106">
+            <div style="font-size: 18px">使用原生JavaScript：</div>
+            <pre class="code-pre">
+<code class="prettyprint lang-javascript">
+var str = "what does Spark do is what you want to do".split(' ');
+var result = {};
+var word;
+for (var i = 0; i < str.length; i++) {
+    word = str[i];
+    result[word] = result[word] ? result[word] + 1 : 1;
+}
+console.log(result);
+</code>
+</pre>
+        </div>
+        <div class="fairy-step ch1 p8" step-index="107">
+            <div style="font-size: 18px">
+                <table style="width:100%;text-align:center;">
+                    <thead>
+                        <tr style="height:60px;">
+                            <th>Map</th>
+                            <th>Reduce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>word -> (word: 1)</td>
+                            <td>(word1: 1, word2: 1) + (word2: 1, word3: 1)<br>-> (word1: 1, word2: 2, word3: 1)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <pre class="code-pre">
+<code class="prettyprint lang-javascript">
+var result = "what does Spark do is what you want to do"
+    .split(' ')
+    .map(v => new Object({[v]: 1}))
+    .reduce(function(v1, v2) {
+        for (word in v2) { 
+            v1[word] ? v1[word] += v2[word] : v1[word] = v2[word] 
+        }
+        return v1;
+    });
+console.log(result);
+</code>
+</pre>
+        </div>
+        <div class="fairy-step ch1 p9" step-index="108">
+            <div style="font-size: 18px">使用Spark API</div>
+            <pre class="code-pre">
+<code class="prettyprint lang-javascript">
+var result = "what does Spark do is what you want to do"
+    .split(' ')
+    .map(v => [v, 1])
+    .reduceByKey((a, b) => a + b);
+console.log(result);
+</code>
+</pre>
+        </div>
+
+<!-- CH2  -->
+
+        <div class="fairy-step ch2 p1 not-always-show" step-index="200" fairy-scale="2">
+            <h2>需求与思路</h2>
+            <div>
+                <div style="font-size: 18px;text-align: left;border: gray solid 1px;padding: 20px;border-radius: 10px;background: #eee;float: left; width: 300px; margin-right: 20px;">ELK<br>优点：框架成熟，部署方便。<br>缺点：无法处理复杂的分析，配置辣么麻烦。</div>
+                <div style="float:left; height:100px; line-height: 100px;">=></div>
+                <div style="font-size: 18px;text-align: left;border: gray solid 1px;padding: 20px;border-radius: 10px;background: #eee;float: left; width: 300px; margin-left: 20px;">Spark Streaming<br>优点：可以应对复杂分析，没啥配置。<br>缺点：技术债务，成本。</div>
+            </div>
+        </div>
+        <div class="fairy-step ch2 p2" step-index="201,204,207" fairy-scale="1.1">
+            <img src="images/p1.png">
+            <div class="fairy-step ch2 p3 not-always-show" step-index="202">
+                <h2>适配</h2>
+                <div>对于每条日志，如果它同时符合N个适配条件，那么就会输出N个相应的处理结果；如果一个都不符合，则直接被丢弃。</div>
+            </div>
+            <div class="fairy-step ch2 p4 not-always-show" step-index="203" fairy-scale="0.2">
+                <h2>条件</h2>
+                <div>适配条件多种多样（特定字段值，正则匹配URL值等），应用提供最基本的类来支持最基础的匹配，也可以重载适配函数。</div>
+            </div>
+            <div class="fairy-step ch2 p5 not-always-show" step-index="205">
+                <h2>转换</h2>
+                <div>每个适配器将对匹配的原始日志进行处理，并输出相应的处理后日志，按照指定格式存入数据库。</div>
+            </div>
+        </div>
+
+<!-- CH3  -->
+
+        <div class="fairy-step ch3 p1 not-always-show" step-index="300" fairy-scale="2">
+            <h2>架构与实现</h2>
+            <div></div>
+        </div>
+        <div class="fairy-step ch3 p2" step-index="301,309" fairy-scale="1.1">
+            <img src="images/kse.png">
+            <div class="fairy-step ch3 p3 not-always-show" step-index="302">
+                <h2>日志收集</h2>
+                <div>在应用端使用Logstash监听日志，并将获得的日志分流——存储一份基础日志到ES，并复制一份进入消息队列。Logstash自带日志分析，然而需要处理的日志种类日益增多，并且更加复杂，那么编写Logstash配置将成为巨大挑战。</div>
+            </div>
+            <div class="fairy-step ch3 p4 not-always-show" step-index="303" fairy-scale="1.5">
+                <h2>消息队列</h2>
+                <div>我们使用Kafka作为消息队列，这可以使得KSE获得一部分缓冲，若处理速度跟不上消息增长，那么则预示着可能需要增加计算资源。</div>
+            </div>
+            <div class="fairy-step ch3 p5 not-always-show" step-index="304">
+                <h2 style="text-align:center">获取数据</h2>
+                <div>原始Log是Json格式的，它们将以2秒每批次的速率进入Spark计算集群。<br>Spark Streaming会对每一批次尽可能多地获取数据。</div>
+            </div>
+            <div class="fairy-step ch3 p6 not-always-show" step-index="305">
+                <h2 style="text-align:right;padding: 0 25px;">Spark Driver</h2>
+                <div>此结点作为Spark Driver存在，并不参与运算，它负责统筹运行状态，记录应用本身log，并向Spark Master申请计算资源。Spark Master将从此结点获得任务程序、依赖库以及静态文件，并在集群中分配Spark Executor进行计算。</div>
+            </div>
+            <div class="fairy-step ch3 p7 not-always-show" step-index="306">
+                <h2>日志分析</h2>
+                <div>应用对Spark Streaming集群制订了窗口，窗口将会每隔10秒对未处理任务进行处理，这是KSE除了消息队列之外的另一个弹性设定，它将降低Spark集群访问数据库的频次，如果一个窗口处理时间超过了10秒，那么任务会被顺延到下一个窗口，高峰期的任务会逐渐累积，并顺延至低谷期，若低谷期的算力仍然不足以处理任务，那么可能就需要调整Spark资源规模。Spark拥有Web UI，能详细到每一个任务的每一步运算，这对KSE这样的24*7任务的排错和监控具有非常好的指导作用。</div>
+            </div>
+            <div class="fairy-step ch3 p8 not-always-show" step-index="307" fairy-scale="0.25">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h2>日志适配器</h2>
+                                <div>处理日志的原理是去匹配日志的一些特征，若符合一定规则，则认为是目标日志，将对这条日志进行分析，并输出新的日志。</div>
+                            </td>
+                            <td>
+                                <pre class="code-pre">
+<code class="prettyprint lang-python">
+class viewcountAdapter(BaseAdapter):
+
+    grok_pattern = r'(/api/v\d+|)/videos/(?P&lt;video_id&gt;\d+)/view/?'
+    es_prefix = 'logstash-viewcount-'
+    es_doc_type = 'viewcount'
+
+    @classmethod
+    def build(cls, source):
+        ret = cls.addSpecificParameters(source)
+        ret['video_id'] = source['video_id']
+        return ret
+</code>
+</pre>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="fairy-step ch3 p9 not-always-show" step-index="308">
+                <h2>日志存储</h2>
+                <div>输出日志遵循了Logstash规范，使得输出到ES集群的处理后日志可以直接使用Kibana查看，或者提供后续程序做进一步处理或查询聚合使用。</div>
+            </div>
+        </div>
+        <div class="fairy-step ch3 p10 not-always-show" step-index="310" fairy-scale="4">
+            <h2>数据</h2>
+            <div>
+                <ul>
+                    <li>规模：<span class="host">2CPU，4G RAM</span> * 3</li>
+                    <li>日均处理数据：</li>
+                    <li>高峰时期算力：</li>
+                </ul>
+            </div>
+        </div>
+
+<!-- CH4  -->
+
+        <div class="fairy-step ch4 p1 not-always-show" step-index="400">
+            <h2>注意点和坑</h2>
+            <ul>
+                <li>在服务器资源少量的情况下，不要尝试使用Spark代替常规运算程序，Spark将会花费大量的时间在资源调度和IO上，服务器也有一大部分内存需要供给JVM和GC。</li>
+                <li>编写Spark任务程序的时候，时刻牢记程序将运行在分布式环境下，不要随意传递对象给函数，这有时候会导致程序在单机时可以运行，集群下运行失败。也要慎用广播，序列化编解码过程将花费大量时间。</li>
+                <li>改进程序本身永远比无脑扩展集群规模要有效得多，熟练组合使用Spark的各类RDD转化和动作将大大减少运算时间。</li>
+                <li>注意使用Web UI查看错误，也要定期关注集群健康度，必要时扩展集群规模。</li>
+                <li>如果发现Spark并不适合你的项目，需要有壮士断腕的勇气，要知道Spark程序重构为普通程序是十分容易的，反之亦然。</li>
+            </ul>
+        </div>
+
+<!-- CH5  -->
+
+        <div class="fairy-step ch5" step-index="500">
+            Thank you :)
+            <br><span style="font-size:30px;color:rgb(143, 199, 76);">Powered By fairy.js</span>
+            <div><button id="replay">Replay</button></div>
+        </div>
+    </div>
+    <script>
+        prettyPrint();
+        fairy('init', {
+            perspective: 1000,
+            transitionDuration: 1000,
+            events: {
+                change: function(dom, index) {
+                    $(".fairy-step").removeClass('show');
+                    $(".fairy-element").removeClass('show');
+                    $(".ch2.p2").removeClass('no-opacity');
+                    $(".ch3.p2").removeClass('no-opacity');
+                    if (index < 2) {
+                        $(".fairy-step.title.p1").addClass('show');
+                    } else if (index < 100) {
+                        $(".fairy-step.title").addClass('show');
+                        $(".fairy-step.title.p1").removeClass('show');
+                    } else if (index < 200) {
+                        $(".fairy-step.ch1").addClass('show');
+                        $(".fairy-element.ch1").addClass('show');
+                    } else if (index < 300) {
+                        if (index != 200) {
+                            $(".fairy-step.ch2").addClass('show');
+                            $(".fairy-element.ch2").addClass('show');
+                            if (index != 208) {
+                                $(".ch2.p2").addClass('no-opacity');
+                            }
+                        }
+                    } else if (index < 400) {
+                        if (index != 300) {
+                            $(".fairy-step.ch3").addClass('show');
+                            $(".fairy-element.ch3").addClass('show');
+                            if (index != 310) {
+                                $(".ch3.p2").addClass('no-opacity');
+                            }
+                        }
+                    } else if (index < 500) {
+                        
+                    } else if (index < 600) {
+                        
+                    };
+                    $(".fairy-step.not-always-show").removeClass('show');
+                }
+            }
+        })('start');
+        $("#replay").click(function(){
+            fairy('start');
+        });
+    </script>
+</body>
+</html>
