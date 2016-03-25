@@ -100,10 +100,26 @@
     width: 800px;
     transform: translate3d(75px,300px,3000px);
 }
+.ch1.p8 tr
+{
+    height: 100px;
+}
+.ch1.p8 td>div
+{
+    display: inline-block;
+}
+.ch1.p8 td>div.block
+{
+    vertical-align: middle;
+    padding: 20px;
+    border-radius: 10px;
+    border: gray solid 1px;
+    background: #eee;
+}
 .ch1.p9
 {
     width: 800px;
-    transform: translate3d(75px,750px,3000px);
+    transform: translate3d(75px,850px,3000px);
 }
 
 /* ch2 */

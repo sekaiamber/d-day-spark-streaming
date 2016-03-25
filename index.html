@@ -72,16 +72,22 @@ console.log(result);
         <div class="fairy-step ch1 p8" step-index="107">
             <div style="font-size: 18px">
                 <table style="width:100%;text-align:center;">
-                    <thead>
-                        <tr style="height:60px;">
-                            <th>Map</th>
-                            <th>Reduce</th>
-                        </tr>
-                    </thead>
                     <tbody>
                         <tr>
-                            <td>word -> (word: 1)</td>
-                            <td>(word1: 1, word2: 1) + (word2: 1, word3: 1)<br>-> (word1: 1, word2: 2, word3: 1)</td>
+                            <td>Map</td>
+                            <td>
+                                <div class="block">word</div>
+                                <div>=></div>
+                                <div class="block">(word: 1)</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Reduce</td>
+                            <td>
+                                <div class="block">(word1: 1, word2: 1)<br>+<br>(word2: 1, word3: 1)</div>
+                                <div>=></div>
+                                <div class="block">(word1: 1, word2: 2, word3: 1)</div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -299,6 +305,9 @@ WHERE path LIKE @'(/api/v\d+|)/videos/(?&lt;video_id&gt;\d+)/view/?'
                 }
             }
         })('start');
+        for (var i=0;i<9;i++){
+            fairy('next');
+        }
         $("#replay").click(function(){
             fairy('start');
         });
