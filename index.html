@@ -160,7 +160,7 @@ console.log(result);
             </div>
             <div class="fairy-step ch3 p4 not-always-show" step-index="303" fairy-scale="1.5">
                 <h2>消息队列</h2>
-                <div>我们使用Kafka作为消息队列，这可以使得KSE获得一部分缓冲，若处理速度跟不上消息增长，那么则预示着可能需要增加计算资源。</div>
+                <div>我们使用Kafka作为消息队列，这可以使得应用获得一部分缓冲，若处理速度跟不上消息增长，那么则预示着可能需要增加计算资源。</div>
             </div>
             <div class="fairy-step ch3 p5 not-always-show" step-index="304">
                 <h2 style="text-align:center">获取数据</h2>
@@ -172,7 +172,7 @@ console.log(result);
             </div>
             <div class="fairy-step ch3 p7 not-always-show" step-index="306">
                 <h2>日志分析</h2>
-                <div>应用对Spark Streaming集群制订了窗口，窗口将会每隔10秒对未处理任务进行处理，这是KSE除了消息队列之外的另一个弹性设定，它将降低Spark集群访问数据库的频次，如果一个窗口处理时间超过了10秒，那么任务会被顺延到下一个窗口，高峰期的任务会逐渐累积，并顺延至低谷期，若低谷期的算力仍然不足以处理任务，那么可能就需要调整Spark资源规模。Spark拥有Web UI，能详细到每一个任务的每一步运算，这对KSE这样的24*7任务的排错和监控具有非常好的指导作用。</div>
+                <div>应用对Spark Streaming集群制订了窗口，窗口将会每隔10秒对未处理任务进行处理，这是除了消息队列之外的另一个弹性设定，它将降低Spark集群访问数据库的频次，如果一个窗口处理时间超过了10秒，那么任务会被顺延到下一个窗口，高峰期的任务会逐渐累积，并顺延至低谷期，若低谷期的算力仍然不足以处理任务，那么可能就需要调整Spark资源规模。Spark拥有Web UI，能详细到每一个任务的每一步运算，这对24*7任务的排错和监控具有非常好的指导作用。</div>
             </div>
             <div class="fairy-step ch3 p8 not-always-show" step-index="307" fairy-scale="0.25">
                 <table>
@@ -229,7 +229,7 @@ class viewcountAdapter(BaseAdapter):
                     </tr>
                     <tr>
                         <td>维护</td>
-                        <td>注意使用Web UI查看错误，也要定期关注集群健康度，必要时扩展集群规模。</td>
+                        <td>注意使用Web UI查看程序错误，也要定期关注集群健康度，必要时扩展集群规模。可以使用Ganglia之类的集群监控系统对结点健康状况进行监控。</td>
                     </tr>
                 </tbody>
             </table>
@@ -305,9 +305,6 @@ WHERE path LIKE @'(/api/v\d+|)/videos/(?&lt;video_id&gt;\d+)/view/?'
                 }
             }
         })('start');
-        for (var i=0;i<9;i++){
-            fairy('next');
-        }
         $("#replay").click(function(){
             fairy('start');
         });
