@@ -12,6 +12,7 @@
 <!-- <script src="scripts/fairy.maker.js"></script> -->
     <script src="scripts/jquery-1.11.1.min.js"></script>
     <script src="scripts/google/prettify.js"></script>
+    <script src="scripts/google/lang-sql.js"></script>
 </head>
 <body>
 
@@ -27,7 +28,7 @@
             <div>Spark简介</div>
             <div>需求与思路</div>
             <div>架构与实现</div>
-            <div>注意事项</div>
+            <div>建议与展望</div>
         </div>
 
 <!-- CH1  -->
@@ -201,27 +202,48 @@ class viewcountAdapter(BaseAdapter):
                 <div>输出日志遵循了Logstash规范，使得输出到ES集群的处理后日志可以直接使用Kibana查看，或者提供后续程序做进一步处理或查询聚合使用。</div>
             </div>
         </div>
-        <div class="fairy-step ch3 p10 not-always-show" step-index="310" fairy-scale="4">
-            <h2>数据</h2>
-            <div>
-                <ul>
-                    <li>规模：<span class="host">2CPU，4G RAM</span> * 3</li>
-                    <li>日均处理数据：</li>
-                    <li>高峰时期算力：</li>
-                </ul>
-            </div>
-        </div>
 
 <!-- CH4  -->
 
         <div class="fairy-step ch4 p1 not-always-show" step-index="400">
-            <h2>注意点和坑</h2>
+            <h2>建议</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>立项</td>
+                        <td>在服务器资源少量的情况下，不要尝试使用Spark代替常规运算程序，Spark将会花费大量的时间在资源调度和IO上，服务器也有部分资源需要供给JVM和GC。</td>
+                    </tr>
+                    <tr>
+                        <td>编码</td>
+                        <td>时刻牢记程序将运行在分布式环境下，不要随意传递对象给函数，这有时候会导致程序在单机时可以运行，集群下运行失败。也要慎用广播，序列化编解码过程将花费大量时间。</td>
+                    </tr>
+                    <tr>
+                        <td>重构</td>
+                        <td>改进程序本身永远比无脑扩展集群规模要有效得多，熟练组合使用Spark的各类RDD转化和动作将大大减少运算时间。</td>
+                    </tr>
+                    <tr>
+                        <td>维护</td>
+                        <td>注意使用Web UI查看错误，也要定期关注集群健康度，必要时扩展集群规模。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="fairy-step ch4 p2 not-always-show" step-index="401">
+            <div><strong>如果发现Spark并不适合你的项目，需要有<b>壮士断腕</b>的勇气！<br>要知道Spark程序重构为普通程序是<b>十分容易</b>的，反之亦然。</strong></div>
+        </div>
+        <div class="fairy-step ch4 p3 not-always-show" step-index="402">
+            <h2>展望</h2>
             <ul>
-                <li>在服务器资源少量的情况下，不要尝试使用Spark代替常规运算程序，Spark将会花费大量的时间在资源调度和IO上，服务器也有一大部分内存需要供给JVM和GC。</li>
-                <li>编写Spark任务程序的时候，时刻牢记程序将运行在分布式环境下，不要随意传递对象给函数，这有时候会导致程序在单机时可以运行，集群下运行失败。也要慎用广播，序列化编解码过程将花费大量时间。</li>
-                <li>改进程序本身永远比无脑扩展集群规模要有效得多，熟练组合使用Spark的各类RDD转化和动作将大大减少运算时间。</li>
-                <li>注意使用Web UI查看错误，也要定期关注集群健康度，必要时扩展集群规模。</li>
-                <li>如果发现Spark并不适合你的项目，需要有壮士断腕的勇气，要知道Spark程序重构为普通程序是十分容易的，反之亦然。</li>
+                <li>输出数据到队列，将ES index分流工作交给后续程序，例如logstash。</li>
+                <li>支持热加载适配器。</li>
+                <li>将适配器写成描述性的配置文件而非代码。</li>
+                <li>支持类SQL语句生成简单的适配器。例如：<br>
+                    <pre>
+<code class="prettyprint lang-sql" style="font-size:18px;">SELECT parameter.col AS col_out, sum(arr) AS sum_out 
+FROM SOURCE 
+WHERE path LIKE @'(/api/v\d+|)/videos/(?&lt;video_id&gt;\d+)/view/?'
+</code></pre>
+                </li>
             </ul>
         </div>
 
