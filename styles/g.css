@@ -74,3 +74,100 @@ pre.code-pre .high-light
 {
     background: rgb(255, 211, 219);
 }
+
+/* tab */
+.tab
+{
+    position: fixed;
+    z-index: 100;
+    top: 5px;
+    transition: 0.5s;
+    transform: translateX(0);
+}
+.tab.close {
+    transform: translateX(-310px);
+}
+.tab>div
+{
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 20px;
+    border-radius: 10px;
+    border: gray solid 1px;
+    background: #eee;
+    vertical-align: top;
+}
+.tab .sign {
+    cursor: pointer;
+    padding: 15px;
+}
+.tab .sign:after{
+    content: "<"
+}
+.tab.close .sign:after{
+    content: ">"
+}
+.tab .content
+{
+    width: 300px;
+    padding: 20px;
+    border-radius: 10px;
+    border: gray solid 1px;
+    background: #eee;
+}
+.tab .content .text {
+    height: 150px;
+    font-size: 28px;
+    box-sizing: border-box;
+    padding: 10px;
+    border: gray solid 1px;
+    outline: none;
+}
+.tab .content .img-container
+{
+    display: inline-block;
+    width: 126px;
+    height: 126px;
+    text-align: center;
+    line-height: 126px;
+    transition: all 0.5s ease;
+    cursor: pointer;
+}
+.tab .content .img-container.hover{
+    box-shadow: 0px 0px 5px #888888;
+}
+.tab .content .img-container img
+{
+    max-height: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+
+
+.image-source-link {
+	color: #98C3D1;
+}
+
+.mfp-with-zoom .mfp-container,
+.mfp-with-zoom.mfp-bg {
+	opacity: 0;
+	-webkit-backface-visibility: hidden;
+	/* ideally, transition speed should match zoom duration */
+	-webkit-transition: all 0.3s ease-out; 
+	-moz-transition: all 0.3s ease-out; 
+	-o-transition: all 0.3s ease-out; 
+	transition: all 0.3s ease-out;
+}
+
+.mfp-with-zoom.mfp-ready .mfp-container {
+		opacity: 1;
+}
+.mfp-with-zoom.mfp-ready.mfp-bg {
+		opacity: 0.8;
+}
+
+.mfp-with-zoom.mfp-removing .mfp-container, 
+.mfp-with-zoom.mfp-removing.mfp-bg {
+	opacity: 0;
+}

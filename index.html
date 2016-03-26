@@ -7,10 +7,12 @@
     <meta name="author" content="sekaiamber(Xu Xiaomeng)" />
     <link href="styles/g.css" rel="stylesheet" />
     <link href="styles/fairy.css" rel="stylesheet" />
+    <link href="styles/magnific-popup.css" rel="stylesheet" />
     <link href="styles/google/prettify.css" rel="stylesheet" />
     <script src="scripts/fairy.min.js"></script>
 <!-- <script src="scripts/fairy.maker.js"></script> -->
     <script src="scripts/jquery-1.11.1.min.js"></script>
+    <script src="scripts/jquery.magnific-popup.min.js"></script>
     <script src="scripts/google/prettify.js"></script>
     <script src="scripts/google/lang-sql.js"></script>
 </head>
@@ -260,6 +262,23 @@ WHERE path LIKE @'(/api/v\d+|)/videos/(?&lt;video_id&gt;\d+)/view/?'
             <br><span style="font-size:30px;color:rgb(143, 199, 76);">Powered By fairy.js</span>
             <div><button id="replay">Replay</button></div>
         </div>
+
+<!-- Other -->
+
+        <div class="tab close">
+            <div class="content">
+                <div class="pic-select">
+                    <div class="img-container"><img src="images/source_log.png" href="images/source_log.png"></div>
+                    <div class="img-container"><img src="images/processed_log.png" href="images/processed_log.png"></div>
+                    <div class="img-container"><img src="images/logstash.png" href="images/logstash.png"></div>
+                    <div class="img-container"><img src="images/kibana.png" href="images/kibana.png"></div>
+                </div>
+                <div class="text" contenteditable="true">
+                </div>
+            </div>
+            <div class="sign"></div>
+        </div>
+
     </div>
     <script>
         prettyPrint();
@@ -307,6 +326,39 @@ WHERE path LIKE @'(/api/v\d+|)/videos/(?&lt;video_id&gt;\d+)/view/?'
         })('start');
         $("#replay").click(function(){
             fairy('start');
+        });
+        var $tab = $('.tab');
+        $('.tab .sign').click(function() {
+            if ($tab.hasClass('close')) {
+                $tab.removeClass('close');
+            } else {
+                $tab.addClass('close');
+            }
+        })
+        $('.tab .img-container').hover(function() {
+            $(this).addClass('hover');
+        }, function() {
+            $(this).removeClass('hover');
+        });
+        $('.pic-select', $tab).magnificPopup({
+            delegate: '.img-container img',
+            type: 'image',
+            closeOnContentClick: false,
+            closeBtnInside: false,
+            mainClass: 'mfp-with-zoom mfp-img-mobile',
+            image: {
+                verticalFit: true,
+                titleSrc: function(item) {
+                    return "";
+                }
+            },
+            gallery: {
+                enabled: true
+            },
+            zoom: {
+                enabled: true,
+                duration: 300, // don't foget to change the duration also in CSS
+            }
         });
     </script>
 </body>
